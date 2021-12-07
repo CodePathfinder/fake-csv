@@ -1,0 +1,28 @@
+{% extends "schemas/layout.html" %}
+
+{% block body %}
+
+<div class="card w-50 mx-auto pb-5 mt-5">
+    <div class="card-body">
+        <h2 class="text-center my-5">
+            Login
+        </h2>  
+    
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group my-4 w-50 mx-auto">
+                <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+            </div>
+            <div class="form-group mb-3 w-50 mx-auto">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end col-9">
+                <input class="btn btn-primary" type="submit" value="Login">
+            </div>
+            
+        </form>
+
+    </div>
+  </div>    
+
+{% endblock %}

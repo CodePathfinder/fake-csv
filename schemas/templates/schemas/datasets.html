@@ -1,0 +1,80 @@
+{% extends "schemas/layout.html" %}
+
+{% load static %}
+
+{% block title %}
+Data sets
+{% endblock %}
+
+{% block body %}
+
+<div class="col-9 my-3">
+    <div class="row">
+        <h4 class="col-4"> 
+            Data sets
+        </h4>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-8 pe-4">
+            
+            <form action="{% url 'datasets' schema.id %}" method="post" class="">
+                <div class="row mb-3">
+                    {% csrf_token %}
+                    <label for="inputrows" class="col-sm-5 col-form-label text-end">Rows:</label>
+                    <div class="col-sm-3">
+                    <input autofocus type="text" class="form-control" name="rows" placeholder="500" id="inputrows">
+                    </div>
+                    <button class="btn btn-success col-sm-4 px-0" type="submit">Generate data</button>
+                </div>    
+            </form>
+            
+        </div>
+    </div>
+    <h5 class="my-3"> 
+        Schema: {{ schema.name}}
+    </h5>
+    <h5>
+        {{ message }}
+    </h5>
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+    
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.created_at|date:"Y-m-d" }}</td>
+                <td>
+                    {% if item.status == 'Success' %}
+                    <button type="button" class="btn btn-success btn-sm">Ready</button>
+                    {% elif item.status == 'Failed' %}
+                    <button type="button" class="btn btn-success btn-sm">Ready</button>
+                    {% else %}
+                    <button type="button" class="btn btn-secondary btn-sm">Processing</button>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ item.path }}" download>
+                        Download
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% comment %} 
+<a href="{% get_media_prefix %}user_{{ user.id }}/schema_{{ schema.id }}/{{ filename }}" download>
+    Download
+</a> 
+{% endcomment %}
+
+{% endblock %}
+

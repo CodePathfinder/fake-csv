@@ -1,0 +1,14 @@
+
+a {
+    text-decoration: none;
+}
+
+.range {
+    visibility: hidden;
+}
+
+#smt-btn {
+    position: fixed;
+    top: 100px;
+    right: 15%;
+}

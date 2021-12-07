@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-4">
+        <label class="form-label">{{ type_form.colomn_name.label }}</label>
+        {{ type_form.colomn_name }}
+    </div>
+    <div class="col-3">
+        <label class="form-label">{{ type_form.data_type.label }}</label>
+        {{ type_form.data_type }}
+    </div>
+    
+    <div class="col-1 range" style="visibility:hidden">
+        <label class="form-label">{{ type_form.range_from.label }}</label>
+        {{ type_form.range_from }}
+    </div>
+    <div class="col-1 range" style="visibility:hidden">
+        <label class="form-label">{{ type_form.range_to.label }}</label>
+        {{ type_form.range_to }}
+    </div>
+    
+    <div class="col-2">
+        <label class="form-label">{{ type_form.order_num.label }}</label>
+        {{ type_form.order_num }}
+    </div>
+    <div class="col-1 pt-3">
+        <br> 
+        <p class="text-danger">Delete</p>
+    </div>
+</div>

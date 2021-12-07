@@ -1,0 +1,57 @@
+{% extends "schemas/layout.html" %}
+
+{% load static %}
+
+{% block title %}
+New schema
+{% endblock %}
+
+{% block body %}
+
+<h4 class="mb-3">New schema</h4>
+
+<form action="{% url 'schema' %}" method="post">
+    {% csrf_token %}
+
+    {% for field in schema_form %}
+        <div class="form-group">
+            
+            {% if field.errors %}
+                <div class="alert alert-danger">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+            
+            <label class="form-label">{{ field.label }}</label>
+            
+            {{ field }}
+        </div>
+
+    {% endfor %}
+
+    <h4 class="my-4">Schema columns</h4>
+
+    
+    <div id="col-container">
+        <!-- colomms to be added here -->
+    </div> 
+        
+    <button type="submit" id='smt-btn' class="btn btn-primary">Submit</button>
+    
+
+</form>
+    
+<div >
+    <div class="card mt-3">
+        <div class="card-body">
+            <div id="blank-colomn-form">
+
+                {% include 'schemas/inc/colomn.html' %}
+
+            </div>            
+            <button id="add-colomn" type="submit" class="btn btn-primary">Add column</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

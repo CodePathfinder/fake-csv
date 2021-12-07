@@ -1,0 +1,77 @@
+{% extends "schemas/layout.html" %}
+
+{% load static %}
+
+{% block title %}
+Data schemas
+{% endblock %}
+
+{% block body %}
+
+<script type="text/javascript">
+
+    // Upon double click on symbol makes visible buy/sell form and authocomplete the form with the symbol and number of user's shares
+    function get_symbol(smbl, n) {
+        document.querySelector('#actionform').style.visibility = "visible";
+        document.querySelector('#symbol').setAttribute("value", smbl);
+        document.querySelector('#shares').setAttribute("value", n);
+    }
+    // Changes attribute action in the form depending on selected action (buy or sell)
+    function chAction(input) {
+        let actionform = document.querySelector('#actionform');
+        if (!actionform) return false;
+        actionform.action = '/' + input.value;
+    }
+
+</script>
+
+<div class="col-9 my-3">
+    <div class="row my-3">
+        <h4 class="col-6"> 
+            Data schemas
+        </h4>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-6">
+            <a href="{% url 'schema' %}" class="btn btn-success">New schema</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Modified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schema in schemas %}
+    
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'datasets' schema.id %}">
+                        {{ schema.name }}
+                    </a>
+                </td>
+                <td>
+                    {{ schema.updated_at|date:"Y-m-d" }}
+                   
+                </td>
+                <td>
+                    <a href="#">
+                        Edit scheme{{ n }}
+                    </a>
+                    <a href="#" class="link-danger ms-4">
+                        Delete
+                    </a>
+                </td>
+    
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
