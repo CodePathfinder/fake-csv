@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-qw*an4x4)gpqhd7^vq)k4bip$zfhl(=b=sxm_p$kvng4uxuv=f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -137,3 +137,27 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# REDIS related settings
+
+REDIS_HOST = '0.0.0.0'
+
+REDIS_PORT = '6379'
+
+# CELERY related settings
+
+CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
+CELERY_RESULT_BACKEND = 'redis://0.0.0.0:6379/0'
+
+# CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
+# CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+
+# CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
+# CELERY_ACCEPT_CONTENT = ['application/json']
+
+# CELERY_TASK_SERIALIZER = 'json'
+
+# CELERY_RESULT_SERIALIZER = 'json'

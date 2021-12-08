@@ -6,7 +6,7 @@ import os
 import time
 
 
-def call_task(schema_id, rows=5):
+def generate_csv(schema_id, rows=5):
 
 # ============== PREPARE BODY (schema) FOR API REQUEST ==============
 
@@ -33,7 +33,7 @@ def call_task(schema_id, rows=5):
 
     jfields = json.dumps(fields)
 
-    API_KEY = os.environ.get('API_KEY')
+    API_KEY = os.environ.get('API_KEY', '3dad09c0')
 
 # ======================== REQUEST DATA ===========================    
 

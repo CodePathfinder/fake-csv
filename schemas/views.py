@@ -10,7 +10,8 @@ from django.db import IntegrityError
 
 from .models import Schema, SchemaTypes, DataTypes
 from .forms import SchemaForm, SchemaTypesForm
-from .utils import call_task
+# from .utils import generate_csv
+from .tasks import fake_csv
 
 
 def index(request):
@@ -92,7 +93,7 @@ class SchemaCreate(View):
 
             # create colomn object           
             try:
-                col_obj = SchemaTypes.objects.create(
+                SchemaTypes.objects.create(
                     schema = new_schema,
                     colomn_name = request.POST.get(f'colomn_name_{i}'),
                     data_type = dtype_obj,
@@ -140,10 +141,12 @@ class Datasets(View):
         rows = request.POST['rows']      
 
 # TODO this should be the task delegated to Celery to work in backgroud
-        
-        status_code, date, filename, message = call_task(schema_id, rows)
 
-        print('Call Task Response: ', status_code, date, filename, message) 
+        fake_csv.delay(schema_id, rows)
+
+        # status_code, date, filename, message = generate_csv(schema_id, rows)
+
+        # print('Call Task Response: ', status_code, date, filename, message) 
         
         return redirect('datasets', schema_id)
 
