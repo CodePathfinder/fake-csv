@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# MOCKAROO API KEY
+API_KEY = os.environ.get('API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG') == 'True')
@@ -42,7 +46,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-
+    
+    # Simplified static file serving.
+    # https://warehouse.python.org/project/whitenoise/
     'whitenoise.middleware.WhiteNoiseMiddleware',
     
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,14 +85,26 @@ WSGI_APPLICATION = 'planekstz.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('NAME'),
-        'USER': os.environ.get('USER'),
-        'PASSWORD': os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
-        'PORT': os.environ.get('PORT')
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "os.environ.get('DB_NAME')",
+        'USER': "os.environ.get('DB_USERNAME')",
+        'PASSWORD': "os.environ.get('DB_PASSWORD')",
+        'HOST': "os.environ.get('DB_HOST')",
+        'PORT': "os.environ.get('DB_PORT')"
     }
 }
+
+# https://devcenter.heroku.com/articles/python-concurrency-and-database-connections
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 
 AUTH_USER_MODEL = "schemas.User"
 
@@ -130,6 +148,7 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'schemas/static'),
     os.path.join(BASE_DIR, 'schemas/media/'),
@@ -145,7 +164,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Cache configuration
+# Cache configuration heroku
 
 CACHES = {
     "default": {
@@ -164,6 +183,23 @@ CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL')
 
 CELERY_RESULT_BACKEND = os.environ.get('REDISCLOUD_URL')
 
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://0.0.0.0:6379",
+#         "TIMEOUT": 60*30,
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#         }
+#     }
+# }
+
+# # CELERY related settings
+
+# CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
+
+# CELERY_RESULT_BACKEND = 'redis://0.0.0.0:6379/0'
+
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*30}
 
 CELERY_RESULT_EXPIRES = 60*30
@@ -177,3 +213,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
+
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

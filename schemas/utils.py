@@ -46,9 +46,7 @@ def generate_csv(schema_id, task_key, rows=30):
 
 # ======================== REQUEST DATA ===========================    
     
-    API_KEY = os.environ.get('MOCKAROO_API_KEY')
-    
-    url = f'https://api.mockaroo.com/api/generate.csv?key={API_KEY}&count={rows}'
+    url = f'https://api.mockaroo.com/api/generate.csv?key={settings.API_KEY}&count={rows}'
     
     # logger.info('READY FOR API REQUEST TO %s', url)
 
