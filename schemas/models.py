@@ -33,8 +33,7 @@ class Schema(models.Model):
     string_character = models.CharField(max_length=20, choices = STR_CHAR_CHOICES, default='Double-quote(")')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_deleted = models.BooleanField(blank=True, null=True)
-    deleted_at = models.DateTimeField(blank=True, null=True)
+
     
     def __str__(self):
         return self.name
@@ -50,7 +49,6 @@ class SchemaTypes(models.Model):
     order_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_deleted = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
         return self.colomn_name
@@ -81,7 +79,10 @@ class DataSet(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="dataset")
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE, related_name="data")
-    path = models.CharField(max_length=128, default="")
-    status = models.CharField(max_length=128, default="Processing")
+    rows = models.IntegerField(blank=True, null=True)
+    path = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
-    deleted_at = models.DateTimeField(blank=True, null=True)
+    monitor_task_key = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return self.monitor_task_key

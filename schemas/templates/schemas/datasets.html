@@ -20,20 +20,20 @@ Data sets
                     {% csrf_token %}
                     <label for="inputrows" class="col-sm-5 col-form-label text-end">Rows:</label>
                     <div class="col-sm-3">
-                    <input autofocus type="text" class="form-control" name="rows" placeholder="500" id="inputrows">
+                    <input autofocus type="number" min="1" max="1000" class="form-control" name="rows" placeholder="500" id="inputrows" required>
                     </div>
-                    <button class="btn btn-success col-sm-4 px-0" type="submit">Generate data</button>
+                    <button id="gen-data-btn" class="btn btn-success col-sm-4 px-0" type="submit">Generate data</button>
                 </div>    
             </form>
             
         </div>
     </div>
-    <h5 class="my-3"> 
-        Schema: {{ schema.name}}
-    </h5>
-    <h5>
-        {{ message }}
-    </h5>
+    <div class="row">
+        <h5 class="col-4 my-3" id="row-valid-msg"> 
+            Schema: {{ schema.name}}
+        </h5>
+
+    </div>
     <table class="table table-bordered">
 
         <thead>
@@ -45,22 +45,28 @@ Data sets
             </tr>
         </thead>
         <tbody>
-            {% for item in data %}
-    
+            
+            {% for item in schema_data %}   
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ item.created_at|date:"Y-m-d" }}</td>
                 <td>
-                    {% if item.status == 'Success' %}
                     <button type="button" class="btn btn-success btn-sm">Ready</button>
-                    {% elif item.status == 'Failed' %}
-                    <button type="button" class="btn btn-success btn-sm">Ready</button>
-                    {% else %}
-                    <button type="button" class="btn btn-secondary btn-sm">Processing</button>
-                    {% endif %}
                 </td>
                 <td>
-                    <a href="{{ item.path }}" download>
+                    <a href="{{ item.path }}" download>Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for item in pending_data %}
+            <tr>
+                <td>{{ forloop.counter|add:schema_data.count }}</td>
+                <td>{{ item.task_created }}</td>
+                <td>
+                    <button type="button" class="btn btn-secondary btn-sm">Processing</button>
+                </td>
+                <td>
+                    <a class="invisible" href="" download>
                         Download
                     </a>
                 </td>
@@ -70,11 +76,6 @@ Data sets
     </table>
 </div>
 
-{% comment %} 
-<a href="{% get_media_prefix %}user_{{ user.id }}/schema_{{ schema.id }}/{{ filename }}" download>
-    Download
-</a> 
-{% endcomment %}
 
 {% endblock %}
 

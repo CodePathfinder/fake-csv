@@ -7,11 +7,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db import IntegrityError
+from django.core.cache import cache
 
 from .models import Schema, SchemaTypes, DataTypes
 from .forms import SchemaForm, SchemaTypesForm
-# from .utils import generate_csv
 from .tasks import fake_csv
+from .utils import monitor_task_key
+
+import time
 
 
 def index(request):
@@ -124,13 +127,33 @@ class Datasets(View):
         try:
             schema = Schema.objects.get(id = schema_id)
         except Schema.DoesNotExist:
-            return JsonResponse({"error": "Schema not found"}, status=404)
+            return JsonResponse({"error": "Schema not found"}, safe=False, status=404)
         
+        # get dataset collection from DB
         schema_data = schema.data.all()
 
+        # get from cache pending datasets(uncompleted tasks) for schema_id 
+        pending_data = []
+        for key in cache.keys(f'*schema-{schema_id}*'):
+            print('KEY: ', key)
+            task_data = {}
+            task_data.update(
+                task_key = key.split('.')[-1],
+                task_id = cache.get(key)['task_id'],
+                task_created = cache.get(key)['date']
+            )
+            pending_data.append(task_data)
+        
+        print()
+        print('SCHEMA_DATA: ', schema_data)
+        print()
+        print('PENDING DATA: ', pending_data)
+        print()
+        
         context = {
             'schema': schema,
-            'data': schema_data
+            'schema_data': schema_data,
+            'pending_data': pending_data
         }
 
         return render(request, "schemas/datasets.html", context=context)
@@ -138,16 +161,34 @@ class Datasets(View):
     @method_decorator(login_required(login_url='login'))
     def post(self, request, schema_id):
         
-        rows = request.POST['rows']      
+        print('ENTER POST BLOCK')
+        rows = request.POST['rows']
+        print('ROWS: ', rows)
+        # validate rows input:
+        if not rows:
+            return JsonResponse({'ValidationError': 'rows field is required'}, status=400) 
+        try: 
+            rows = int(rows)
+        except ValueError:
+            return JsonResponse({'ValidationError': 'rows should be an integer'}, status=400) 
+        if rows < 1 or rows > 1000:
+            return JsonResponse({'ValidationError': 'please enter positive integer in range for 1 to 1000'}, status=400) 
 
-# TODO this should be the task delegated to Celery to work in backgroud
+        # generate key for monitoring tasks in cache
+        mtk = monitor_task_key()
+        task_key = f'schema-{schema_id}.{mtk}'
 
-        fake_csv.delay(schema_id, rows)
-
-        # status_code, date, filename, message = generate_csv(schema_id, rows)
-
-        # print('Call Task Response: ', status_code, date, filename, message) 
+        # task is launched  
+        task_id = fake_csv.delay(schema_id, task_key, rows)
         
+        task_data = {
+            'task_id': task_id,
+            'date': time.strftime("%Y-%m-%d")
+        }
+
+        # place task key/task data in cache
+        cache.set(task_key, task_data, timeout=60*30)
+ 
         return redirect('datasets', schema_id)
 
 

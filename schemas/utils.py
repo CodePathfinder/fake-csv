@@ -1,12 +1,21 @@
-import json
-import requests
-from .models import Schema, DataSet
 from django.conf import settings
+from django.core.cache import cache
+from django.db import IntegrityError
+
+from .models import Schema, DataSet
+from planekstz.celery import logger
+
 import os
 import time
+import string
+import random
+import json
+import requests
 
 
-def generate_csv(schema_id, rows=5):
+def generate_csv(schema_id, task_key, rows=30):
+
+    # logger.info('START GENERATE CSV')
 
 # ============== PREPARE BODY (schema) FOR API REQUEST ==============
 
@@ -33,64 +42,90 @@ def generate_csv(schema_id, rows=5):
 
     jfields = json.dumps(fields)
 
-    API_KEY = os.environ.get('API_KEY', '3dad09c0')
+    # logger.info('REQUEST BODY/SCHEMA IS BUILT')
 
 # ======================== REQUEST DATA ===========================    
-
+    
+    API_KEY = os.environ.get('MOCKAROO_API_KEY')
+    
     url = f'https://api.mockaroo.com/api/generate.csv?key={API_KEY}&count={rows}'
+    
+    # logger.info('READY FOR API REQUEST TO %s', url)
+
     
     try:
         # CSV response upon POST request
         response = requests.post(url, data=jfields)
         response.raise_for_status()
-        print('Response: ', response)
-        # print(response.encoding)
+        # logger.info('RESPONSE STATUS CODE: %s. TEXT FETCHED FROM REMOTE API', response.status_code)
+        
+    except requests.exceptions.RequestException as ex:
+        # logger.info('FAILED. REQUEST EXCEPTION. STATUS_CODE: %s', response.status_code)
+        return response.text
 
-    except requests.RequestException as ex:
-        message = f"Failed. RequestException: {ex}"
-        return (response.status_code, None, None, message)
 
     # Parse response
+    # logger.info('PARSING API RESPONSE')
     try:
         data = response.text  
 
-    except (KeyError, TypeError, ValueError):
-        message = "Parsing error"
-        return (response.status_code, None, None, message)
+    except (KeyError, TypeError, ValueError) as ex:
+        # logger.info("FAILED. PARSING ERROR: %s", ex)
+        return 
 
 # ========================== SAVE DATA =============================
 
-    # date created
+    # get timestamp
     date = time.strftime("%Y-%m-%d")
 
+    # parse 
+    mtk = task_key.split('.')[-1]
+
     # builf filename for cvs file
-    filename = f'{rows}_{date}.csv'
+    filename = f'{rows}_{date}_{mtk}.csv'
+
+    # logger.info('START SAVING DATA TO CSV FILE %s', filename)
 
     # Get the full path to upload response
     upload_path = upload_to(schema, filename)
-
-    message = 'Processing'
 
     # Save data to csv file
     try:
         with open(upload_path, 'w') as file:
             file.write(data)
-            message = 'Success'
+            # logger.info('DATA SAVED TO CSV FILE')
 
-    except Exception:
-        message = 'Failed'
-        return (response.status_code, date, None, message)
-  
-# ================= TODO UPDATE DB table DataSet here ====================
+    except IOError as error:
+        # logger.info('FAILED. DATA NOT SAVED. EXCEPTION: %s', error)
+        return
+        
+# ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
 
-    DataSet.objects.create(
+    # logger.info('START SAVING TASK DATA TO DATABASE')
+
+    try:
+        DataSet.objects.create(
         user = schema.user,
         schema = schema,
+        rows = rows,
         path = upload_path.split('schemas')[1].strip(),
-        status = message,
-    )
+        monitor_task_key = mtk,
+        )
+        # logger.info('NEW OBJECT CREATED IN DATASET')
 
-    return (response.status_code, date, filename, message)
+    except IntegrityError as error:
+        # logger.info('NEW OBJECT IS NOT CREATED AND SAVED DUE TO INTEGRITY ERROR: %s', error)
+        return
+
+# ================= REMOVE TASK DATA FROM CACHE ====================
+
+    if cache.has_key(task_key):
+        cache.expire(task_key, timeout=0)
+        # logger.info('CACHED TASK %s EXPIRED', task_key)
+
+    logger.info('SUCCESS. TASK %s IS COMPLETED IN FULL', mtk)
+
+    return
 
 
 def upload_to(schema, filename):     
@@ -105,3 +140,7 @@ def upload_to(schema, filename):
     # return full path to csv file
     return (dir_path_to_file + filename)
         
+
+def monitor_task_key():
+    """Generate random 6-sybmol string"""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))  

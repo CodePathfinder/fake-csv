@@ -1,6 +1,5 @@
 from django.contrib import admin
-from django.contrib.admin.decorators import display
-from .models import User, DataTypes, Schema, SchemaTypes, DataSource
+from .models import User, DataTypes, Schema, SchemaTypes, DataSet, DataSource
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -29,8 +28,15 @@ class SchemaTypesAdmin(admin.ModelAdmin):
     search_fields = ('schema', 'colomn_name', 'range_from')
 
 
+class DataSetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'schema', 'rows', 'path', 'monitor_task_key', 'created_at')
+    list_display_links = ('rows', 'path', 'monitor_task_key')
+    order_by = '-created_at'
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(DataTypes, DataTypesAdmin)
 admin.site.register(Schema, SchemaAdmin)
 admin.site.register(SchemaTypes, SchemaTypesAdmin)
+admin.site.register(DataSet, DataSetAdmin)
 admin.site.register(DataSource)

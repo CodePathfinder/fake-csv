@@ -1,17 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // clean type field after reload
     document.querySelector('#id_data_type').value = "";
+    
+    // add first colomn
     addColomn();
+
+    // add further colomns upon pless 'Add Colomn' button 
     document.querySelector('#add-colomn').onclick = function() {
         addColomn();
-        };
-  
-    // document.querySelectorAll('.col-delete').forEach(link => {
-    //     link.onclick = function() {
-    //         deleteColomn(this.dataset.col);
-    //     }
-    // });
+    };
+    
+    // check pending task data status every 10 seconds (DEACTIVATED)
+    // document.addEventListener('#gen-data-btn').onclick = function () {
+    //     setInterval(getPendingDataStatus, 10000);
+    // };    
 });
+    
 
 let counter = 0;
 
@@ -68,6 +73,7 @@ document.addEventListener('click', event => {
     }    
 });
 
+
 // Visiolise range colomns when 'integer' or 'text' type is selected
 document.addEventListener('change', event => {
     const element = event.target;
@@ -84,3 +90,7 @@ document.addEventListener('change', event => {
         });
     };   
 });
+
+
+// TODO: ADD FETCH REQUEST WITH PROCESSING FEEDBACK DATA AND UPDATE datasets.html
+// function getPendingDataStatus() {}
