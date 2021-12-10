@@ -21,13 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('FAKECSV_SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('DEBUG') == 'True')
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'), '127.0.0.1']
 
 # Application definition
 
@@ -77,8 +76,12 @@ WSGI_APPLICATION = 'planekstz.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('NAME'),
+        'USER': os.environ.get('USER'),
+        'PASSWORD': os.environ.get('PASSWORD'),
+        'HOST': os.environ.get('HOST'),
+        'PORT': os.environ.get('PORT')
     }
 }
 
@@ -124,8 +127,9 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'schemas/static')
 
-STATICFILES_DIR = [
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'schemas/static'),
+    os.path.join(BASE_DIR, 'schemas/media/'),
 ]
 
 MEDIA_URL = '/media/'
@@ -143,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://0.0.0.0:6379",
+        "LOCATION": os.environ.get('REDISCLOUD_URL'),
         "TIMEOUT": 60*30,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -153,9 +157,9 @@ CACHES = {
 
 # CELERY related settings
 
-CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
+CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL')
 
-CELERY_RESULT_BACKEND = 'redis://0.0.0.0:6379/0'
+CELERY_RESULT_BACKEND = os.environ.get('REDISCLOUD_URL')
 
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*30}
 
@@ -166,3 +170,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 
 CELERY_RESULT_SERIALIZER = 'json'
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
