@@ -93,6 +93,7 @@ if 'DATABASE_URL' in os.environ:
             'HOST': "os.environ.get('DB_HOST')",
             'PORT': "os.environ.get('DB_PORT')"
         }
+
     }
     # https://devcenter.heroku.com/articles/python-concurrency-and-database-connections
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
@@ -105,7 +106,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 
 AUTH_USER_MODEL = "schemas.User"
 
