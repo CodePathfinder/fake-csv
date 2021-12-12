@@ -82,7 +82,7 @@ def generate_csv(schema_id, task_key, rows=30):
     # builf filename for cvs file
     filename = f'{rows}_{date}_{mtk}.csv'
 
-    # logger.info('START SAVING DATA TO CSV FILE %s', filename)
+    logger.info('START SAVING DATA TO CSV FILE %s', filename)
 
     # Get the full path to upload response
     upload_path = upload_to(schema, filename)
@@ -91,15 +91,15 @@ def generate_csv(schema_id, task_key, rows=30):
     try:
         with open(upload_path, 'w') as file:
             file.write(data)
-            # logger.info('DATA SAVED TO CSV FILE')
+            logger.info('DATA SAVED TO CSV FILE')
 
     except IOError as error:
-        # logger.info('FAILED. DATA NOT SAVED. EXCEPTION: %s', error)
+        logger.info('FAILED. DATA NOT SAVED. EXCEPTION: %s', error)
         return
         
 # ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
 
-    # logger.info('START SAVING TASK DATA TO DATABASE')
+    logger.info('START SAVING TASK DATA TO DATABASE')
 
     try:
         DataSet.objects.create(

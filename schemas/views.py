@@ -125,13 +125,14 @@ class Datasets(View):
     def get(self, request, schema_id):
         
         try:
-            schema = Schema.objects.get(id = schema_id)
+            s = Schema.objects.get(id = schema_id)
+            print(s)
         except Schema.DoesNotExist:
             return JsonResponse({"error": "Schema not found"}, safe=False, status=404)
         
         # get dataset collection from DB
-        schema_data = schema.data.all()
-
+        schema_data = s.data.all()
+        print(schema_data)
         # get from cache pending datasets(uncompleted tasks) for schema_id 
         pending_data = []
         for key in cache.keys(f'*schema-{schema_id}*'):
@@ -151,7 +152,7 @@ class Datasets(View):
         print()
         
         context = {
-            'schema': schema,
+            'schema': s,
             'schema_data': schema_data,
             'pending_data': pending_data
         }

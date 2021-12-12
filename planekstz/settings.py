@@ -30,7 +30,7 @@ API_KEY = os.environ.get('API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG') == 'True')
 
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST'), '127.0.0.1']
+ALLOWED_HOSTS = ['fake--csv.herokuapp.com', '127.0.0.1']
 
 # Application definition
 
@@ -93,18 +93,19 @@ if 'DATABASE_URL' in os.environ:
             'HOST': "os.environ.get('DB_HOST')",
             'PORT': "os.environ.get('DB_PORT')"
         }
+
     }
     # https://devcenter.heroku.com/articles/python-concurrency-and-database-connections
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 else:
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 
 AUTH_USER_MODEL = "schemas.User"
 
@@ -151,7 +152,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'schemas/static'),
-    os.path.join(BASE_DIR, 'schemas/media/'),
 ]
 
 MEDIA_URL = '/media/'
@@ -164,41 +164,40 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Cache configuration heroku
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get('REDISCLOUD_URL'),
-        "TIMEOUT": 60*30,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+# Configuration of cache, celery broker and result backend
+if 'REDISCLOUD_URL' in os.environ:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get('REDISCLOUD_URL'),
+            "TIMEOUT": 60*30,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            }
         }
     }
-}
 
-# CELERY related settings
+    CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL')
 
-CELERY_BROKER_URL = os.environ.get('REDISCLOUD_URL')
+    CELERY_RESULT_BACKEND = os.environ.get('REDISCLOUD_URL')
 
-CELERY_RESULT_BACKEND = os.environ.get('REDISCLOUD_URL')
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://0.0.0.0:6379",
+            "TIMEOUT": 60*30,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            }
+        }
+    }
+    CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
 
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://0.0.0.0:6379",
-#         "TIMEOUT": 60*30,
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
-#         }
-#     }
-# }
+    CELERY_RESULT_BACKEND = 'redis://0.0.0.0:6379/0'
 
-# # CELERY related settings
 
-# CELERY_BROKER_URL = 'redis://0.0.0.0:6379/0'
-
-# CELERY_RESULT_BACKEND = 'redis://0.0.0.0:6379/0'
+# other CELERY related settings
 
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*30}
 
