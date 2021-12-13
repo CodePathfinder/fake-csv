@@ -86,6 +86,8 @@ def generate_csv(schema_id, task_key, rows=30):
 
     # Get the full path to upload response
     upload_path = upload_to(schema, filename)
+    
+    logger.info(f'DATA SAVED TO CSV FILE AT: {upload_path}')
 
     # Save data to csv file
     try:
