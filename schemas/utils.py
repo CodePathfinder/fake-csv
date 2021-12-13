@@ -4,6 +4,7 @@ from django.db import IntegrityError
 
 from .models import Schema, DataSet
 from planekstz.celery import logger
+from planekstz import settings
 
 import os
 import time
@@ -11,6 +12,9 @@ import string
 import random
 import json
 import requests
+import cloudinary.uploader
+import cloudinary.api
+
 
 
 def generate_csv(schema_id, task_key, rows=30):
@@ -48,17 +52,17 @@ def generate_csv(schema_id, task_key, rows=30):
     
     url = f'https://api.mockaroo.com/api/generate.csv?key={settings.MOCKAROO_API_KEY}&count={rows}'
     
-    # logger.info('READY FOR API REQUEST TO %s', url)
+    logger.info('READY FOR API REQUEST TO %s', url)
 
     
     try:
         # CSV response upon POST request
         response = requests.post(url, data=jfields)
         response.raise_for_status()
-        # logger.info('RESPONSE STATUS CODE: %s. TEXT FETCHED FROM REMOTE API', response.status_code)
+        logger.info('RESPONSE STATUS CODE: %s. TEXT FETCHED FROM REMOTE API', response.status_code)
         
     except requests.exceptions.RequestException as ex:
-        # logger.info('FAILED. REQUEST EXCEPTION. STATUS_CODE: %s', response.status_code)
+        logger.info('FAILED. REQUEST EXCEPTION. STATUS_CODE: %s', response.status_code)
         return response.text
 
 
@@ -71,7 +75,7 @@ def generate_csv(schema_id, task_key, rows=30):
         # logger.info("FAILED. PARSING ERROR: %s", ex)
         return 
 
-# ========================== SAVE DATA =============================
+# ========================== SAVE DATA LOCALLY =============================
 
     # get timestamp
     date = time.strftime("%Y-%m-%d")
@@ -80,67 +84,84 @@ def generate_csv(schema_id, task_key, rows=30):
     mtk = task_key.split('.')[-1]
 
     # builf filename for cvs file
-    filename = f'{rows}_{date}_{mtk}.csv'
+    filename = f'{mtk}.csv'
 
     logger.info('START SAVING DATA TO CSV FILE %s', filename)
 
     # Get the full path to upload response
-    upload_path = upload_to(schema, filename)
-    
-    logger.info(f'DATA SAVED TO CSV FILE AT: {upload_path}')
+    # upload_path = upload_to() + filename
 
     # Save data to csv file
+
+    # remote_path = 'https://res.cloudinary.com/hpjtqqaso/raw/upload/v1/media/' + filename
+
+    logger.info(cloudinary.utils.cloudinary_url(filename, resource_type = "raw"))
+
+    local_dir = '/media/'
+
+    os.makedirs(local_dir, exist_ok=True)
+
+    local_path = '/media/temp.csv'
+
+    logger.info(cloudinary.utils.cloudinary_url(filename, resource_type = "raw"))
+
     try:
-        with open(upload_path, 'w') as file:
+        with open(local_path, 'w') as file:
             file.write(data)
-            logger.info('DATA SAVED TO CSV FILE')
+            logger.info('DATA SAVED LOCALLY TO TEMP.CSV FILE')
 
     except IOError as error:
-        logger.info('FAILED. DATA NOT SAVED. EXCEPTION: %s', error)
+        logger.info(f'FAILED. DATA NOT SAVED. EXCEPTION: {error}')
         return
-        
+
+# ================= UPLOAD LOCALLY SAVED FILE TO CLOUDINARY STORAGE ====================
+
+    logger.info('START UPLOADING FILE TO CLOUDINARY')
+
+    try:
+        cloud_response = cloudinary.uploader.upload(local_path, resource_type="row", public_id=filename)
+        logger.info(f'SuCCESS. CLOUDRESPONSE: {cloud_response}')
+    except Exception as ex:
+        logger.info(f'FAILED. FILE IS NOT UPLOADED: {ex}')
+        return
+
 # ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
 
     logger.info('START SAVING TASK DATA TO DATABASE')
 
     try:
-        DataSet.objects.create(
-        user = schema.user,
-        schema = schema,
-        rows = rows,
-        path = upload_path.split('schemas')[1].strip(),
-        monitor_task_key = mtk,
+        obj = DataSet.objects.create(
+            user = schema.user,
+            schema = schema,
+            rows = rows,
+            path = cloud_response.url,
+            monitor_task_key = mtk,
         )
-        # logger.info('NEW OBJECT CREATED IN DATASET')
+        logger.info(f'NEW OBJECT CREATED IN DATASET, PATH {obj.path}')
 
     except IntegrityError as error:
-        # logger.info('NEW OBJECT IS NOT CREATED AND SAVED DUE TO INTEGRITY ERROR: %s', error)
+        logger.info('NEW OBJECT IS NOT CREATED AND SAVED DUE TO INTEGRITY ERROR: %s', error)
         return
 
 # ================= REMOVE TASK DATA FROM CACHE ====================
 
     if cache.has_key(task_key):
         cache.expire(task_key, timeout=0)
-        # logger.info('CACHED TASK %s EXPIRED', task_key)
+        logger.info('CACHED TASK %s EXPIRED', task_key)
 
     logger.info('SUCCESS. TASK %s IS COMPLETED IN FULL', mtk)
 
     return
 
+# def upload_to():
+#     if settings.REMOTE_FLAG: 
+#         return settings.DEFAULT_FILE_STORAGE + '/media/'
+#     else:
+#         return settings.MEDIA_URL
+        # return 'https://res.cloudinary.com/cpf/' + settings.MEDIA_ROOT + filename 
 
-def upload_to(schema, filename):     
-
-    """Get the full path to upload response"""    
-    # Build the path to ultimate media folder
-    dir_path_to_file = f'{settings.MEDIA_ROOT}user_{schema.user.id}/schema_{schema.id}/'
-
-    # create path folders in media (intermediate and ultimate), if not exist
-    os.makedirs(dir_path_to_file, exist_ok=True)
-
-    # return full path to csv file
-    return (dir_path_to_file + filename)
-        
 
 def monitor_task_key():
     """Generate random 6-sybmol string"""
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))  
+

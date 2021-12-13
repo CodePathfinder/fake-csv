@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 MOCKAROO_API_KEY = os.environ.get('MOCKAROO_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get('DEBUG') == 'True')
+DEBUG = (os.environ.get('DEBUG') == 'False')
 
 ALLOWED_HOSTS = ['fake--csv.herokuapp.com', '127.0.0.1']
 
@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'schemas',
-    'cloudinary',
     'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -101,8 +101,8 @@ if 'DATABASE_URL' in os.environ:
 
     }
     # https://devcenter.heroku.com/articles/python-concurrency-and-database-connections
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)  
+    REMOTE_FLAG = True
 else:
 
     DATABASES = {
@@ -111,6 +111,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    REMOTE_FLAG = False
 
 AUTH_USER_MODEL = "schemas.User"
 
@@ -159,18 +160,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'schemas/static'),
 ]
 
+
+CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
 
-CLOUDINARY_STORAGE = {
-	'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
-	'API_KEY': os.environ.get('API_KEY'),
-	'API_SECRET': os.environ.get('API_SECRET'),
-    'PREFIX': MEDIA_URL
-}
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
 
 
 # Default primary key field type

@@ -1,6 +1,7 @@
 {% extends "schemas/layout.html" %}
 
 {% load static %}
+{% load cloudinary %}
 
 {% block title %}
 Data sets
@@ -54,7 +55,7 @@ Data sets
                     <button type="button" class="btn btn-success btn-sm">Ready</button>
                 </td>
                 <td>
-                    <a href="{{ item.path }}" download>Download</a>
+                    <a href="{{ item.path.url }}" download>Download</a>
                 </td>
             </tr>
             {% endfor %}
