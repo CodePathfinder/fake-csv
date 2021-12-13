@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # MOCKAROO API KEY
-API_KEY = os.environ.get('API_KEY')
+MOCKAROO_API_KEY = os.environ.get('MOCKAROO_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG') == 'True')
