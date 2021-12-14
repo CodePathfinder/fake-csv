@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from .models import Schema, DataSet
 from planekstz.celery import logger
 from planekstz import settings
+from django.core.files.storage import default_storage
 
 import os
 import time
@@ -12,14 +13,11 @@ import string
 import random
 import json
 import requests
-import cloudinary.uploader
-import cloudinary.api
-
 
 
 def generate_csv(schema_id, task_key, rows=30):
 
-    # logger.info('START GENERATE CSV')
+    logger.info('START GENERATE CSV')
 
 # ============== PREPARE BODY (schema) FOR API REQUEST ==============
 
@@ -52,8 +50,7 @@ def generate_csv(schema_id, task_key, rows=30):
     
     url = f'https://api.mockaroo.com/api/generate.csv?key={settings.MOCKAROO_API_KEY}&count={rows}'
     
-    logger.info('READY FOR API REQUEST TO %s', url)
-
+    logger.info(f'READY FOR API REQUEST TO {url}')
     
     try:
         # CSV response upon POST request
@@ -89,52 +86,30 @@ def generate_csv(schema_id, task_key, rows=30):
     logger.info('START SAVING DATA TO CSV FILE %s', filename)
 
     # Get the full path to upload response
-    # upload_path = upload_to() + filename
+    upload_path = f'media/{filename}'
 
     # Save data to csv file
-
-    # remote_path = 'https://res.cloudinary.com/hpjtqqaso/raw/upload/v1/media/' + filename
-
-    logger.info(cloudinary.utils.cloudinary_url(filename, resource_type = "raw"))
-
-    local_dir = '/media/'
-
-    os.makedirs(local_dir, exist_ok=True)
-
-    local_path = '/media/temp.csv'
-
-    logger.info(cloudinary.utils.cloudinary_url(filename, resource_type = "raw"))
-
     try:
-        with open(local_path, 'w') as file:
+        with default_storage.open(upload_path, 'w') as file:
             file.write(data)
-            logger.info('DATA SAVED LOCALLY TO TEMP.CSV FILE')
+            logger.info(f'DATA SAVED REMOTELY TO S3 WITH FILENAME {upload_path}')
 
     except IOError as error:
         logger.info(f'FAILED. DATA NOT SAVED. EXCEPTION: {error}')
         return
 
-# ================= UPLOAD LOCALLY SAVED FILE TO CLOUDINARY STORAGE ====================
-
-    logger.info('START UPLOADING FILE TO CLOUDINARY')
-
-    try:
-        cloud_response = cloudinary.uploader.upload(local_path, resource_type="row", public_id=filename)
-        logger.info(f'SuCCESS. CLOUDRESPONSE: {cloud_response}')
-    except Exception as ex:
-        logger.info(f'FAILED. FILE IS NOT UPLOADED: {ex}')
-        return
-
 # ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
 
-    logger.info('START SAVING TASK DATA TO DATABASE')
+    s3_file_access_url = default_storage.url(upload_path)
 
+    logger.info(f'DEFAULT STORAGE URL: {default_storage.url(upload_path)}')
+   
     try:
         obj = DataSet.objects.create(
             user = schema.user,
             schema = schema,
             rows = rows,
-            path = cloud_response.url,
+            path = upload_path,
             monitor_task_key = mtk,
         )
         logger.info(f'NEW OBJECT CREATED IN DATASET, PATH {obj.path}')
@@ -147,21 +122,15 @@ def generate_csv(schema_id, task_key, rows=30):
 
     if cache.has_key(task_key):
         cache.expire(task_key, timeout=0)
-        logger.info('CACHED TASK %s EXPIRED', task_key)
+        logger.info(f'CACHED TASK {task_key} EXPIRED')
 
-    logger.info('SUCCESS. TASK %s IS COMPLETED IN FULL', mtk)
+    logger.info(f'SUCCESS. TASK {mtk} IS COMPLETED IN FULL')
 
     return
-
-# def upload_to():
-#     if settings.REMOTE_FLAG: 
-#         return settings.DEFAULT_FILE_STORAGE + '/media/'
-#     else:
-#         return settings.MEDIA_URL
-        # return 'https://res.cloudinary.com/cpf/' + settings.MEDIA_ROOT + filename 
 
 
 def monitor_task_key():
     """Generate random 6-sybmol string"""
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))  
+
 

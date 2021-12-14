@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-import cloudinary
-import cloudinary_storage
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 MOCKAROO_API_KEY = os.environ.get('MOCKAROO_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get('DEBUG') == 'False')
+DEBUG = (os.environ.get('DEBUG') == 'True')
 
 ALLOWED_HOSTS = ['fake--csv.herokuapp.com', '127.0.0.1']
 
@@ -45,8 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'schemas',
-    'cloudinary_storage',
-    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +106,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    REMOTE_FLAG = False
 
 AUTH_USER_MODEL = "schemas.User"
 
@@ -160,15 +154,26 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'schemas/static'),
 ]
 
-
-CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
-
 MEDIA_URL = '/media/'
 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'schemas/media/')
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
+# AWS MEDIA FILES STORAGE CONFIGURATION
 
+# ============================================================
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# AWS S3 Static Files Configuration
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_S3_REGION_NAME = 'eu-central-1'
+
+# ============================================================
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

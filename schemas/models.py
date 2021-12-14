@@ -80,7 +80,7 @@ class DataSet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="dataset")
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE, related_name="data")
     rows = models.IntegerField(blank=True, null=True)
-    path = models.FileField(upload_to='raw/', blank=True)
+    path = models.FileField(upload_to='media/', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     monitor_task_key = models.CharField(max_length=10, blank=True, null=True)
     

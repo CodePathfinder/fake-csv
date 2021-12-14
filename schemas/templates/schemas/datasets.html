@@ -1,11 +1,11 @@
 {% extends "schemas/layout.html" %}
 
 {% load static %}
-{% load cloudinary %}
 
 {% block title %}
 Data sets
 {% endblock %}
+
 
 {% block body %}
 
@@ -14,6 +14,7 @@ Data sets
         <h4 class="col-4"> 
             Data sets
         </h4>
+
         <div class="d-grid gap-2 d-md-flex justify-content-md-end col-8 pe-4">
             
             <form action="{% url 'datasets' schema.id %}" method="post" class="">
@@ -28,13 +29,16 @@ Data sets
             </form>
             
         </div>
+
     </div>
+
     <div class="row">
         <h5 class="col-4 my-3" id="row-valid-msg"> 
             Schema: {{ schema.name}}
         </h5>
-
+        
     </div>
+    
     <table class="table table-bordered">
 
         <thead>
@@ -75,6 +79,7 @@ Data sets
             {% endfor %}
         </tbody>
     </table>
+    
 </div>
 
 
