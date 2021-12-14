@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.db import IntegrityError
 from django.core.cache import cache
 
-from .models import Schema, SchemaTypes, DataTypes, DataSet
+from .models import User, Schema, SchemaTypes, DataTypes, DataSet
 from .forms import SchemaForm, SchemaTypesForm
 from .tasks import fake_csv
 from .utils import monitor_task_key
@@ -191,6 +191,37 @@ def status_check(requst, mtk):
     else:
         return JsonResponse({"url": None})
     
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        
+        # Ensure password matches confirmation
+        password = request.POST["password"]
+        
+        if not username or not password:
+            return render(request, "schemas/register.html", {
+                "message": "Invalid request. Please enter username and password."
+            })
+        confirmation = request.POST["confirmation"]
+        if password != confirmation:
+            return render(request, "schemas/register.html", {
+                "message": "Passwords does not match."
+            })
+
+        # Attempt to create new user
+        try:
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+        except IntegrityError:
+            return render(request, "schemas/register.html", {
+                "message": "Username already taken."
+            })
+        login(request, user)
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "schemas/register.html")
+
 
 def login_view(request):
     if request.method == "POST":
