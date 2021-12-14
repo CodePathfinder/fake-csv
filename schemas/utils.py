@@ -33,7 +33,7 @@ def generate_csv(schema_id, task_key, rows=30):
             'name': obj.colomn_name,
             'type': obj.data_type.api_type
         }
-        if obj.data_type.data_type in ['integer', 'text']:
+        if obj.data_type.data_type in ['Integer', 'Text']:
             if obj.range_from:
                 d['min'] = obj.range_from
             if obj.range_to:
