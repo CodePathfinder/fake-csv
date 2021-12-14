@@ -6,8 +6,13 @@
 Data sets
 {% endblock %}
 
+{% block script %}
+<script src="{% static 'schemas/datasets.js' %}"></script>
+{% endblock %}
 
 {% block body %}
+
+<section>
 
 <div class="col-9 my-3">
     <div class="row">
@@ -15,13 +20,13 @@ Data sets
             Data sets
         </h4>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-8 pe-4">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-7 pe-4">
             
             <form action="{% url 'datasets' schema.id %}" method="post" class="">
                 <div class="row mb-3">
                     {% csrf_token %}
-                    <label for="inputrows" class="col-sm-5 col-form-label text-end">Rows:</label>
-                    <div class="col-sm-3">
+                    <label for="inputrows" class="col-sm-4 col-form-label text-end">Rows:</label>
+                    <div class="col-sm-4">
                     <input autofocus type="number" min="1" max="1000" class="form-control" name="rows" placeholder="500" id="inputrows" required>
                     </div>
                     <button id="gen-data-btn" class="btn btn-success col-sm-4 px-0" type="submit">Generate data</button>
@@ -33,9 +38,9 @@ Data sets
     </div>
 
     <div class="row">
-        <h5 class="col-4 my-3" id="row-valid-msg"> 
+        <button class="col-4 my-3 btn btn-success" id="row-valid-msg"> 
             Schema: {{ schema.name}}
-        </h5>
+        </button>
         
     </div>
     
@@ -71,7 +76,7 @@ Data sets
                     <button type="button" class="btn btn-secondary btn-sm">Processing</button>
                 </td>
                 <td>
-                    <a class="invisible" href="" download>
+                    <a class="invisible pending-url" href="" id="{{ item.task_key }}" download>
                         Download
                     </a>
                 </td>
@@ -82,6 +87,7 @@ Data sets
     
 </div>
 
+<section>
 
 {% endblock %}
 

@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.db import IntegrityError
 from django.core.cache import cache
 
-from .models import Schema, SchemaTypes, DataTypes
+from .models import Schema, SchemaTypes, DataTypes, DataSet
 from .forms import SchemaForm, SchemaTypesForm
 from .tasks import fake_csv
 from .utils import monitor_task_key
@@ -126,17 +126,14 @@ class Datasets(View):
         
         try:
             s = Schema.objects.get(id = schema_id)
-            print(s)
         except Schema.DoesNotExist:
             return JsonResponse({"error": "Schema not found"}, safe=False, status=404)
         
         # get dataset collection from DB
         schema_data = s.data.all()
-        print(schema_data)
-        # get from cache pending datasets(uncompleted tasks) for schema_id 
+        # get from cache pending tasks 
         pending_data = []
         for key in cache.keys(f'*schema-{schema_id}*'):
-            print('KEY: ', key)
             task_data = {}
             task_data.update(
                 task_key = key.split('.')[-1],
@@ -144,13 +141,7 @@ class Datasets(View):
                 task_created = cache.get(key)['date']
             )
             pending_data.append(task_data)
-        
-        print()
-        print('SCHEMA_DATA: ', schema_data)
-        print()
-        print('PENDING DATA: ', pending_data)
-        print()
-        
+ 
         context = {
             'schema': s,
             'schema_data': schema_data,
@@ -162,9 +153,8 @@ class Datasets(View):
     @method_decorator(login_required(login_url='login'))
     def post(self, request, schema_id):
         
-        print('ENTER POST BLOCK')
         rows = request.POST['rows']
-        print('ROWS: ', rows)
+        
         # validate rows input:
         if not rows:
             return JsonResponse({'ValidationError': 'rows field is required'}, status=400) 
@@ -192,6 +182,15 @@ class Datasets(View):
  
         return redirect('datasets', schema_id)
 
+@login_required
+def status_check(requst, mtk):
+
+    if DataSet.objects.filter(monitor_task_key__iexact=mtk).exists():
+        obj = DataSet.objects.get(monitor_task_key__iexact=mtk)
+        return JsonResponse(obj.serialize())
+    else:
+        return JsonResponse({"url": None})
+    
 
 def login_view(request):
     if request.method == "POST":

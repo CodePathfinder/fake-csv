@@ -84,5 +84,8 @@ class DataSet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     monitor_task_key = models.CharField(max_length=10, blank=True, null=True)
     
+    def serialize(self):
+        return { "url": self.path.url }
+
     def __str__(self):
         return self.monitor_task_key

@@ -8,5 +8,7 @@ urlpatterns = [
     path("datasets/<int:schema_id>", views.Datasets.as_view(), name="datasets"),    
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
+    # API routes
+    path("status_check/<str:mtk>", views.status_check, name="status_check"),
 ]  
 
