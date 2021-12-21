@@ -12,3 +12,33 @@ a {
     top: 100px;
     right: 15%;
 }
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+        line-height: 24px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+    75% {
+        opacity: 0.2;
+        line-height: 24px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+    100% {
+        opacity: 0;
+        line-height: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+    }
+}
+#message {
+    animation-name: hide;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+} 

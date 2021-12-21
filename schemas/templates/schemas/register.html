@@ -2,14 +2,13 @@
 
 {% block body %}
 
+{% include 'schemas/inc/alerts.html' %}
+
 <div class="card w-50 mx-auto pb-5 mt-5">
     <div class="card-body">
         <h2 class="text-center my-5">
             Register
-        </h2>  
-        {% if message %}
-        <div class="text-center text-danger">{{ message }}</div>
-        {% endif %}
+        </h2>
         <form action="{% url 'register' %}" method="post">
             {% csrf_token %}
             <div class="form-group my-4 w-50 mx-auto">

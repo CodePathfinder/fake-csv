@@ -34,6 +34,7 @@ function getPendingDataStatus() {
                 
                 if (result['url']) {
                     // change elements properties
+                    console.log(`csv file is saved under url: ${result['url']}`)
                     element.setAttribute('href', result['url']);
                     element.setAttribute('class', 'visible');
                     const bttn = element.parentElement.previousElementSibling.querySelector('button');

@@ -8,28 +8,18 @@ Data schemas
 
 {% block body %}
 
-<script type="text/javascript">
+{% block script %}
+<script src="{% static 'schemas/index.js' %}"></script>
+{% endblock %}
 
-    // Upon double click on symbol makes visible buy/sell form and authocomplete the form with the symbol and number of user's shares
-    function get_symbol(smbl, n) {
-        document.querySelector('#actionform').style.visibility = "visible";
-        document.querySelector('#symbol').setAttribute("value", smbl);
-        document.querySelector('#shares').setAttribute("value", n);
-    }
-    // Changes attribute action in the form depending on selected action (buy or sell)
-    function chAction(input) {
-        let actionform = document.querySelector('#actionform');
-        if (!actionform) return false;
-        actionform.action = '/' + input.value;
-    }
+{% include 'schemas/inc/alerts.html' %}
 
-</script>
-
-<div class="col-9 my-3">
+<div class="col-9 my-3 mx-auto">
     <div class="row my-3">
         <h4 class="col-6"> 
             Data schemas
         </h4>
+
         <div class="d-grid gap-2 d-md-flex justify-content-md-end col-6">
             <a href="{% url 'schema' %}" class="btn btn-success">New schema</a>
         </div>
@@ -48,7 +38,7 @@ Data schemas
         <tbody>
             {% for schema in schemas %}
     
-            <tr>
+            <tr class="schema" id="schema{{schema.id}}">
                 <td>{{ forloop.counter }}</td>
                 <td>
                     <a href="{% url 'datasets' schema.id %}">
@@ -57,15 +47,12 @@ Data schemas
                 </td>
                 <td>
                     {{ schema.updated_at|date:"Y-m-d" }}
-                   
                 </td>
                 <td>
-                    <a href="#">
-                        Edit scheme{{ n }}
+                    <a href="{% url 'schema_update' schema.id %}">
+                        Edit schema
                     </a>
-                    <a href="#" class="link-danger ms-4">
-                        Delete
-                    </a>
+                    <span class="del-link text-danger ms-3">Delete</span>
                 </td>
     
             </tr>

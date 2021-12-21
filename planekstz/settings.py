@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from django.contrib.messages import constants as messages
 from pathlib import Path
 import os
 import dj_database_url
@@ -235,3 +236,8 @@ BROCKER_POOL_LIMIT = 3
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+MESSAGE_TAGS = { 
+    messages.ERROR: 'danger'
+}

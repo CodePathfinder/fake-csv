@@ -4,17 +4,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // clean type field after reload on relevant page   
     document.querySelector('#id_data_type').value = "";
     // add first colomn on relevant page
-    addColomn();
-    // add further colomns upon pless 'Add Colomn' button 
+    addcolomn();
+    // add further colomns upon pless 'Add colomn' button 
     document.querySelector('#add-colomn').onclick = function() {
-        addColomn();
+        addcolomn();
     };
 });
 
 let counter = 0;
 
 // Add new blank colomn to colomn container
-function addColomn() {
+function addcolomn() {
     
     // get colomn form
     const newcol = document.querySelector('#blank-colomn-form').innerHTML;
@@ -38,16 +38,19 @@ function addColomn() {
     const from = element.querySelector('#id_range_from');
     from.id = `id${counter}_range_from`;
     from.name = `range_from_${counter}`;
-    from.parentElement.style.visibility = 'hidden';    
+    from.parentElement.style.visibility = 'hidden';
+    from.setAttribute('min', 0);    
 
     const to = element.querySelector('#id_range_to');
     to.id = `id${counter}_range_to`;
     to.name = `range_to_${counter}`;
     to.parentElement.style.visibility = 'hidden';
+    to.setAttribute('min', 0);
 
     const order = element.querySelector('#id_order_num');
     order.id = `id${counter}_order_num`;
     order.name = `order_num_${counter}`;
+    order.setAttribute('min', 0);
 
     // add class 'col-delete' attributes to delete element
     const del_col = element.querySelector('p');

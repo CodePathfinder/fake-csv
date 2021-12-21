@@ -7,12 +7,11 @@ from planekstz.celery import logger
 from planekstz import settings
 from django.core.files.storage import default_storage
 
-import os
-import time
 import string
 import random
 import json
 import requests
+import re
 
 
 def generate_csv(schema_id, task_key, rows=30):
@@ -72,10 +71,7 @@ def generate_csv(schema_id, task_key, rows=30):
         # logger.info("FAILED. PARSING ERROR: %s", ex)
         return 
 
-# ========================== SAVE DATA LOCALLY =============================
-
-    # get timestamp
-    date = time.strftime("%Y-%m-%d")
+# ========================== SAVE DATA TO S3 BUCKET =============================
 
     # parse 
     mtk = task_key.split('.')[-1]
@@ -115,7 +111,7 @@ def generate_csv(schema_id, task_key, rows=30):
         logger.info(f'NEW OBJECT CREATED IN DATASET, PATH {obj.path}')
 
     except IntegrityError as error:
-        logger.info('NEW OBJECT IS NOT CREATED AND SAVED DUE TO INTEGRITY ERROR: %s', error)
+        logger.info(f'NEW OBJECT IS NOT CREATED AND SAVED DUE TO INTEGRITY ERROR: {error}')
         return
 
 # ================= REMOVE TASK DATA FROM CACHE ====================
@@ -134,3 +130,16 @@ def monitor_task_key():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))  
 
 
+def delete_datasets(path_list):
+    """Delete csv file from media folder in S3 bucket"""
+    if path_list:
+        for path in path_list:
+            filename = path.split("/")[1].split(".")[0]
+            if default_storage.exists(path):                
+                default_storage.delete(path)
+                logger.info(f'FILE {filename} DELETED')
+            else:
+                logger.info(f'FILE {filename}.csv DOES NOT EXIST')
+    else:
+        logger.info(f'NO RELATED CSV FILE IN S3 BUCKET TO BE DELETED')
+    return
