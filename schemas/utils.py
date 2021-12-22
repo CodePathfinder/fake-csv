@@ -22,14 +22,14 @@ def generate_csv(schema_id, task_key, rows=30):
 
     schema = Schema.objects.get(id = schema_id)
 
-    colomns = schema.schematypes.all().order_by('order_num')
+    columns = schema.schematypes.all().order_by('order_num')
 
     fields = []
 
-    for obj in colomns:
+    for obj in columns:
 
         d = {
-            'name': obj.colomn_name,
+            'name': obj.column_name,
             'type': obj.data_type.api_type
         }
         if obj.data_type.data_type in ['Integer', 'Text']:

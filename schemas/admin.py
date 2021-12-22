@@ -22,10 +22,10 @@ class SchemaAdmin(admin.ModelAdmin):
 
 
 class SchemaTypesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'schema', 'colomn_name', 'data_type', 'range_from', 'range_to')
-    list_display_links = ('schema', 'colomn_name', 'data_type')
+    list_display = ('id', 'schema', 'column_name', 'data_type', 'range_from', 'range_to')
+    list_display_links = ('schema', 'column_name', 'data_type')
     order_by = 'data_type'
-    search_fields = ('schema', 'colomn_name', 'range_from')
+    search_fields = ('schema', 'column_name', 'range_from')
 
 
 class DataSetAdmin(admin.ModelAdmin):

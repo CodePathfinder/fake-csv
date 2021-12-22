@@ -3,23 +3,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // clean type field after reload on relevant page   
     document.querySelector('#id_data_type').value = "";
-    // add first colomn on relevant page
-    addcolomn();
-    // add further colomns upon pless 'Add colomn' button 
-    document.querySelector('#add-colomn').onclick = function() {
-        addcolomn();
+    // add first column on relevant page
+    addcolumn();
+    // add further columns upon pless 'Add column' button 
+    document.querySelector('#add-column').onclick = function() {
+        addcolumn();
     };
 });
 
 let counter = 0;
 
-// Add new blank colomn to colomn container
-function addcolomn() {
+// Add new blank column to column container
+function addcolumn() {
     
-    // get colomn form
-    const newcol = document.querySelector('#blank-colomn-form').innerHTML;
+    // get column form
+    const newcol = document.querySelector('#blank-column-form').innerHTML;
 
-    // wrap colomn form into div with mx-2
+    // wrap column form into div with mx-2
     const element = document.createElement('div');
     element.className = 'mx-3';
     element.innerHTML = newcol;
@@ -27,9 +27,9 @@ function addcolomn() {
     // amend "id" and "name" properties for each input element
     counter++;
    
-    const col = element.querySelector('#id_colomn_name');
-    col.id = `id${counter}_colomn_name`;
-    col.name = `colomn_name_${counter}`;
+    const col = element.querySelector('#id_column_name');
+    col.id = `id${counter}_column_name`;
+    col.name = `column_name_${counter}`;
 
     const type = element.querySelector('#id_data_type');
     type.id = `id${counter}_data_type`;
@@ -60,7 +60,7 @@ function addcolomn() {
     document.querySelector('#col-container').append(element);
 }
 
-// Remove colomn selected for deletion
+// Remove column selected for deletion
 document.addEventListener('click', event => {
     const element = event.target;
     if (element.className === 'col-delete col-del btn btn-outline-danger btn-sm') {
@@ -68,11 +68,11 @@ document.addEventListener('click', event => {
     }    
 });
 
-// Visiolise range colomns when 'integer' or 'text' type is selected
+// Visiolise range columns when 'integer' or 'text' type is selected
 document.addEventListener('change', event => {
     const element = event.target;
     if (element.className === 'form-select mb-3') {
-        // reach range elements of relevant colomn through grandparent element 'row'
+        // reach range elements of relevant column through grandparent element 'row'
         const range_els = element.parentElement.parentElement.querySelectorAll('.range');
         range_els.forEach(range=> {
             // if 'integer' or 'text' option is selected, change visibility

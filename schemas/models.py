@@ -29,7 +29,7 @@ class Schema(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="schemas")
     name = models.CharField(max_length=100)
-    colomn_separator = models.CharField(max_length=20, choices = COL_SEP_CHOICES, default='Comma(,)')
+    column_separator = models.CharField(max_length=20, choices = COL_SEP_CHOICES, default='Comma(,)')
     string_character = models.CharField(max_length=20, choices = STR_CHAR_CHOICES, default='Double-quote(")')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,7 +42,7 @@ class Schema(models.Model):
 class SchemaTypes(models.Model):
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE, related_name="schematypes")
-    colomn_name = models.CharField(max_length=100)
+    column_name = models.CharField(max_length=100)
     data_type = models.ForeignKey(DataTypes, on_delete=models.CASCADE, related_name="datatypes")
     range_from = models.IntegerField(blank=True, null=True, default=None)
     range_to = models.IntegerField(blank=True, null=True, default=None)
@@ -51,7 +51,7 @@ class SchemaTypes(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.colomn_name
+        return self.column_name
 
     class Meta:
         verbose_name_plural  = 'SchemaTypes'

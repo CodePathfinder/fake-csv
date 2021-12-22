@@ -12,11 +12,11 @@ class SchemaForm(forms.ModelForm):
 
     class Meta:
         model = Schema
-        fields = ['name', 'colomn_separator', 'string_character']
+        fields = ['name', 'column_separator', 'string_character']
     
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control w-50 mb-3'}),
-            'colomn_separator': forms.Select(attrs={'class': 'form-select w-50 mb-3'}),
+            'column_separator': forms.Select(attrs={'class': 'form-select w-50 mb-3'}),
             'string_character': forms.Select(attrs={'class': 'form-select w-50 mb-3'}),
         }
 
@@ -25,7 +25,7 @@ class SchemaTypesForm(forms.ModelForm):
 
     class Meta:
         model = SchemaTypes
-        fields = ['colomn_name', 'data_type', 'range_from', 'range_to', 'order_num']
+        fields = ['column_name', 'data_type', 'range_from', 'range_to', 'order_num']
         labels = {
             'data_type': 'Type',
             'range_from': 'From',
@@ -34,7 +34,7 @@ class SchemaTypesForm(forms.ModelForm):
         }
 
         widgets = {
-            'colomn_name': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'column_name': forms.TextInput(attrs={'class': 'form-control mb-3'}),
             'data_type': forms.Select(attrs={'class': 'form-select mb-3'}),
             'range_from': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
             'range_to': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
@@ -58,11 +58,11 @@ class SchemaTypesForm(forms.ModelForm):
 #     STR_CHAR_CHOICES = ( ('"','Double-quote(")'), ("'","Single-quote(')"))
 
 #     name = forms.CharField(max_length=100)
-#     colomn_separator = forms.ChoiceField(choices = COL_SEP_CHOICES)
+#     column_separator = forms.ChoiceField(choices = COL_SEP_CHOICES)
 #     string_character = forms.ChoiceField(choices = STR_CHAR_CHOICES)
     
 #     name.widget.attrs.update({'class': 'form-control w-50 mb-3'})
-#     colomn_separator.widget.attrs.update({'class': 'form-select w-50 mb-3'})
+#     column_separator.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 #     string_character.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 
 
@@ -74,7 +74,7 @@ class SchemaTypesForm(forms.ModelForm):
 #     STR_CHAR_CHOICES = ( ('"','Double-quote(")'), ("'","Single-quote(')"))
 
 #     name = forms.CharField(max_length=100)
-#     colomn_separator = forms.CharField(
+#     column_separator = forms.CharField(
 #         max_length=20,
 #         widget = forms.Select(choices = COL_SEP_CHOICES),
 #     )
@@ -84,6 +84,6 @@ class SchemaTypesForm(forms.ModelForm):
 #     )
     
 #     name.widget.attrs.update({'class': 'form-control w-50 mb-3'})
-#     colomn_separator.widget.attrs.update({'class': 'form-select w-50 mb-3'})
+#     column_separator.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 #     string_character.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 

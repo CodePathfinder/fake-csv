@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='schema',
-            name='colomn_separator',
+            name='column_separator',
             field=models.CharField(choices=[(',', 'Comma(,)'), ('\t', 'Tab'), ('|', 'Pipe(|)'), (';', 'Semicolon(;)')], default='Comma(,)', max_length=20),
         ),
         migrations.AlterField(

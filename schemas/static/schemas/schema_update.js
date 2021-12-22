@@ -13,9 +13,9 @@ function update_schema_type_form(element) {
     console.log(type_id);
 
     // amend "id" and "name" properties for each input element
-    const col = element.querySelector('#id_colomn_name');
-    col.id = `id${type_id}_colomn_name`;
-    col.name = `colomn_name_${type_id}`;
+    const col = element.querySelector('#id_column_name');
+    col.id = `id${type_id}_column_name`;
+    col.name = `column_name_${type_id}`;
 
     const type = element.querySelector('#id_data_type');
     type.id = `id${type_id}_data_type`;
@@ -42,7 +42,7 @@ function update_schema_type_form(element) {
     del_col.setAttribute('class', `col-delete col-del btn btn-outline-danger btn-sm`);
 }
 
-// Remove colomn selected for deletion
+// Remove column selected for deletion
 document.addEventListener('click', event => {
     const element = event.target;
     if (element.className === 'col-delete col-del btn btn-outline-danger btn-sm') {
@@ -50,7 +50,7 @@ document.addEventListener('click', event => {
     }    
 });
 
-// Visiolise range colomns when 'integer' or 'text' type is selected
+// Visiolise range columns when 'integer' or 'text' type is selected
 document.addEventListener('change', event => {
     const element = event.target;
     if (element.className === 'form-select mb-3') {
@@ -59,7 +59,7 @@ document.addEventListener('change', event => {
 });
 
 function visibility_switch(element) {
-    // reach range elements of the colomn through grandparent element 'row'
+    // reach range elements of the column through grandparent element 'row'
     const range_els = element.parentElement.parentElement.querySelectorAll('.range');
     range_els.forEach(range=> {
         // if 'integer' or 'text' option is selected, change visibility

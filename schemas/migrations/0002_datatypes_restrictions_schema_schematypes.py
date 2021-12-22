@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
-                ('colomn_separator', models.CharField(choices=[(',', 'Comma(,)'), ('\t', 'Tab'), ('|', 'Pipe(|)'), (';', 'Semicolon(;)')], default='Comma(,)', max_length=100)),
+                ('column_separator', models.CharField(choices=[(',', 'Comma(,)'), ('\t', 'Tab'), ('|', 'Pipe(|)'), (';', 'Semicolon(;)')], default='Comma(,)', max_length=100)),
                 ('string_character', models.CharField(choices=[('"', 'Double-quote(")'), ("'", "Single-quote(')")], default='Double-quote(")', max_length=100)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
             name='SchemaTypes',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('colomn_name', models.CharField(max_length=100)),
+                ('column_name', models.CharField(max_length=100)),
                 ('order_num', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)])),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
