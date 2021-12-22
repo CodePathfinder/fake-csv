@@ -21,7 +21,7 @@ function addcolomn() {
 
     // wrap colomn form into div with mx-2
     const element = document.createElement('div');
-    element.className = 'mx-2';
+    element.className = 'mx-3';
     element.innerHTML = newcol;
 
     // amend "id" and "name" properties for each input element
@@ -53,8 +53,8 @@ function addcolomn() {
     order.setAttribute('min', 0);
 
     // add class 'col-delete' attributes to delete element
-    const del_col = element.querySelector('p');
-    del_col.setAttribute('class', `col-delete text-danger`);
+    const del_col = element.querySelector('button');
+    del_col.setAttribute('class', `col-delete col-del btn btn-outline-danger btn-sm`);
 
     // place new element to DOM
     document.querySelector('#col-container').append(element);
@@ -63,7 +63,7 @@ function addcolomn() {
 // Remove colomn selected for deletion
 document.addEventListener('click', event => {
     const element = event.target;
-    if (element.className === 'col-delete text-danger') {
+    if (element.className === 'col-delete col-del btn btn-outline-danger btn-sm') {
         element.parentElement.parentElement.remove();
     }    
 });

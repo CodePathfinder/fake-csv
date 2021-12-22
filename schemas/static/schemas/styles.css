@@ -1,3 +1,36 @@
+body {
+    background-color: #495057;
+    color: #fff3cd;
+}
+table {
+    background-color: #fdf5de;
+    color: black;
+}
+tr {
+    border: solid #495057 1px;
+    line-height: 32px;
+}
+th, td {
+    text-align: center;
+}
+
+.table-headings {
+    line-height: 36px;
+}
+.card-body {
+    background-color: #495057;
+    border: solid #fff3cd 3px;
+}
+.text-danger {
+    color: black;
+}
+nav {
+    background-color: #fdf5de;
+}
+.col-del {
+    background-color: #e9ecef;
+    margin-top: 11px;
+}
 
 a {
     text-decoration: none;
@@ -5,6 +38,10 @@ a {
 
 .range {
     visibility: hidden;
+}
+
+.col-width {
+    width: 20%;
 }
 
 #smt-btn {
@@ -41,4 +78,4 @@ a {
     animation-duration: 1s;
     animation-fill-mode: forwards;
     animation-play-state: paused;
-} 
+}

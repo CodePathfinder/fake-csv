@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, DataTypes, Schema, SchemaTypes, DataSet, DataSource
+from .models import User, DataTypes, Schema, SchemaTypes, DataSet
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -39,4 +39,3 @@ admin.site.register(DataTypes, DataTypesAdmin)
 admin.site.register(Schema, SchemaAdmin)
 admin.site.register(SchemaTypes, SchemaTypesAdmin)
 admin.site.register(DataSet, DataSetAdmin)
-admin.site.register(DataSource)

@@ -57,24 +57,6 @@ class SchemaTypes(models.Model):
         verbose_name_plural  = 'SchemaTypes'
 
 
-class DataSource(models.Model):
-
-    full_name = models.CharField(max_length=100)
-    job = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    domain_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=100)
-    company_name = models.CharField(max_length=100)
-    text = models.CharField(max_length=100)
-    integer = models.IntegerField()
-    address = models.CharField(max_length=100)
-    date = models.DateTimeField()
-
-    def __str__(self):
-        count = DataSource.objects.all().count()
-        return f"Data source contains {count} records."
-
-
 class DataSet(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="dataset")

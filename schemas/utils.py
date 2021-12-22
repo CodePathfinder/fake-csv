@@ -96,8 +96,6 @@ def generate_csv(schema_id, task_key, rows=30):
 
 # ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
 
-    s3_file_access_url = default_storage.url(upload_path)
-
     logger.info(f'DEFAULT STORAGE URL: {default_storage.url(upload_path)}')
    
     try:

@@ -16,20 +16,21 @@ Data sets
 
 <div class="col-9 my-3 mx-auto">
     <div class="row">
-        <h5 class="col-4"> 
+        <h4 class="col-4"> 
             Data sets
-        </h5>
+        </h4>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-7 pe-4">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-8">
             
             <form action="{% url 'datasets' schema.id %}" method="post" class="">
                 <div class="row mb-3">
                     {% csrf_token %}
-                    <label for="inputrows" class="col-sm-4 col-form-label text-end">Rows:</label>
+                    <label for="inputrows" class="col-sm-3 col-form-label text-end">Rows:</label>
                     <div class="col-sm-4">
                     <input autofocus type="number" min="1" max="1000" class="form-control" name="rows" placeholder="500" id="inputrows" required>
                     </div>
-                    <button id="gen-data-btn" class="btn btn-success col-sm-4 px-0" type="submit">Generate data</button>
+                    <button id="gen-data-btn" class="btn btn-success col-sm-4 px-1" type="submit">Generate data</button>
+                    <div class="col-sm-1"></div>
                 </div>    
             </form>
             
@@ -38,19 +39,23 @@ Data sets
     </div>
 
     <div class="row">
-        <h4 class="col-4 my-3" id="row-valid-msg"> 
-            Schema: {{ schema.name}}
-        </h4>
-        
+        <h5 class="col-9 my-3" id="row-valid-msg"> 
+            Schema:&ensp; {{ schema.name}}
+        </h5>
+    </div>
+    <div class="row">
+        <p class="mb-4">Columns:&emsp; {{ columns|join:",&ensp;" }}</p>
     </div>
     
-    <table class="table table-bordered">
+    <table class="table table-bordered rounded-3">
 
         <thead>
-            <tr>
+            <tr class="table-headings">
                 <th>#</th>
                 <th>Created</th>
-                <th>Status</th>
+                <th>Rows</th>
+                <th>File Name</th>
+                <th class="col-width">Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -60,7 +65,11 @@ Data sets
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ item.created_at|date:"Y-m-d" }}</td>
-                <td>
+
+                <td>{{ item.rows }}</td>
+                <td>{{ item.monitor_task_key }}</td>
+
+                <td class="col-width">
                     <button type="button" class="btn btn-success btn-sm">Ready</button>
                 </td>
                 <td>
@@ -72,7 +81,11 @@ Data sets
             <tr>
                 <td>{{ forloop.counter|add:schema_data.count }}</td>
                 <td>{{ item.task_created }}</td>
-                <td>
+
+                <td>{{ item.task_rows }}</td>
+                <td>{{ item.task_key }}</td>
+
+                <td class="col-width">
                     <button type="button" class="btn btn-secondary btn-sm">Processing</button>
                 </td>
                 <td>

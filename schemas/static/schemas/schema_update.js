@@ -24,25 +24,28 @@ function update_schema_type_form(element) {
 
     const from = element.querySelector('#id_range_from');
     from.id = `id${type_id}_range_from`;
-    from.name = `range_from_${type_id}`;    
+    from.name = `range_from_${type_id}`;
+    from.setAttribute('min', 0);     
     
     const to = element.querySelector('#id_range_to');
     to.id = `id${type_id}_range_to`;
     to.name = `range_to_${type_id}`;
+    to.setAttribute('min', 0);
 
     const order = element.querySelector('#id_order_num');
     order.id = `id${type_id}_order_num`;
     order.name = `order_num_${type_id}`;
+    order.setAttribute('min', 0);
 
     // update class 'col-delete' attributes to delete element
-    const del_col = element.querySelector('p');
-    del_col.setAttribute('class', `col-delete text-danger`);
+    const del_col = element.querySelector('button');
+    del_col.setAttribute('class', `col-delete col-del btn btn-outline-danger btn-sm`);
 }
 
 // Remove colomn selected for deletion
 document.addEventListener('click', event => {
     const element = event.target;
-    if (element.className === 'col-delete text-danger') {
+    if (element.className === 'col-delete col-del btn btn-outline-danger btn-sm') {
         element.parentElement.parentElement.remove();
     }    
 });

@@ -14,9 +14,9 @@ Data schemas
 
 {% include 'schemas/inc/alerts.html' %}
 
-<div class="col-9 my-3 mx-auto">
-    <div class="row my-3">
-        <h4 class="col-6"> 
+<div class="col-9 mx-auto">
+    <div class="row my-4">
+        <h4 class="col-6 mt-1"> 
             Data schemas
         </h4>
 
@@ -25,14 +25,14 @@ Data schemas
         </div>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered rounded-3">
 
         <thead>
             <tr>
                 <th>#</th>
                 <th>Title</th>
                 <th>Modified</th>
-                <th>Actions</th>
+                <th colspan="2">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -48,13 +48,15 @@ Data schemas
                 <td>
                     {{ schema.updated_at|date:"Y-m-d" }}
                 </td>
-                <td>
+                <td class="col-width">
                     <a href="{% url 'schema_update' schema.id %}">
                         Edit schema
                     </a>
-                    <span class="del-link text-danger ms-3">Delete</span>
                 </td>
-    
+                <td class="col-width">
+                    <button class="btn btn-outline-danger btn-sm py-0 my-0">Delete</button>
+                    {% comment %} <p class="btn btn-outline-danger btn-sm py-0 my-0">Delete</p> {% endcomment %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
