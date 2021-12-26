@@ -3,11 +3,6 @@ from django import forms
 from .models import DataTypes, Schema, SchemaTypes
 
 
-# def build_datatype_field():
-#     kwargs = {}
-#     kwargs["queryset"] = DataTypes.objects.all()
-#     return forms.ModelsChoiceField(**kwargs)
-
 class SchemaForm(forms.ModelForm):
 
     class Meta:
@@ -21,7 +16,9 @@ class SchemaForm(forms.ModelForm):
         }
 
 
-class SchemaTypesForm(forms.ModelForm):
+class SchemaTypesForm(forms.ModelForm):   
+
+    cleaned_data = {}
 
     class Meta:
         model = SchemaTypes
@@ -40,15 +37,6 @@ class SchemaTypesForm(forms.ModelForm):
             'range_to': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
             'order_num': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
         }
-        
-        
-
-
-
-
-
-
-
 
 #=================================forms.Form (option 1)==========================================
 
@@ -87,3 +75,8 @@ class SchemaTypesForm(forms.ModelForm):
 #     column_separator.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 #     string_character.widget.attrs.update({'class': 'form-select w-50 mb-3'})
 
+
+# def build_datatype_field():
+#     kwargs = {}
+#     kwargs["queryset"] = DataTypes.objects.all()
+#     return forms.ModelsChoiceField(**kwargs)
