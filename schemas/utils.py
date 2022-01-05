@@ -3,15 +3,14 @@ from django.core.cache import cache
 from django.db import IntegrityError
 
 from .models import Schema, DataSet
-from planekstz.celery import logger
-from planekstz import settings
+from fakecsv.celery import logger
+from fakecsv import settings
 from django.core.files.storage import default_storage
 
 import string
 import random
 import json
 import requests
-import re
 
 
 def generate_csv(schema_id, task_key, rows=30):
@@ -94,10 +93,10 @@ def generate_csv(schema_id, task_key, rows=30):
         logger.info(f'FAILED. DATA NOT SAVED. EXCEPTION: {error}')
         return
 
-# ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
-
     logger.info(f'DEFAULT STORAGE URL: {default_storage.url(upload_path)}')
-   
+  
+# ================= CREATE NEW OBJ WITH TASK DATA FOR DB TABLE DATASET ====================
+ 
     try:
         obj = DataSet.objects.create(
             user = schema.user,

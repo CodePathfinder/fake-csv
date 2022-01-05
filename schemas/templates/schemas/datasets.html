@@ -14,23 +14,23 @@ Data sets
 
 <section>
 
-<div class="col-9 my-3 mx-auto">
+<div class="col-md-9 my-3 mx-auto">
     <div class="row">
-        <h4 class="col-4"> 
+        <h4 class="col-md-4"> 
             Data sets
         </h4>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-8">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-md-8">
             
             <form action="{% url 'datasets' schema.id %}" method="post" class="">
                 <div class="row mb-3">
                     {% csrf_token %}
-                    <label for="inputrows" class="col-sm-3 col-form-label text-end">Rows:</label>
-                    <div class="col-sm-4">
+                    <label for="inputrows" class="col col-md-3 col-form-label text-end">Rows:</label>
+                    <div class="col col-md-4" style="width: 30%">
                     <input autofocus type="number" min="1" max="1000" class="form-control" name="rows" placeholder="500" id="inputrows" required>
                     </div>
-                    <button id="gen-data-btn" class="btn btn-success col-sm-4 px-1" type="submit">Generate data</button>
-                    <div class="col-sm-1"></div>
+                    <button id="gen-data-btn" class="btn btn-success col px-1 me-3" style="width: 40%" type="submit">Generate data</button>
+                    {% comment %} <div class="col-sm-1"></div> {% endcomment %}
                 </div>    
             </form>
             

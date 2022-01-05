@@ -1,14 +1,14 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // call status_check
-    status_check();
+    // call statusCheck
+    statusCheck();
 });
 
 let timerId = 0;
 
 // check pending task data status every 3 seconds
-function status_check() {
+function statusCheck() {
     timerId = setInterval(() => {
         getPendingDataStatus()
     }, 3000);

@@ -1,4 +1,4 @@
-from planekstz.celery import app
+from fakecsv.celery import app
 
 from .utils import generate_csv, delete_datasets
 

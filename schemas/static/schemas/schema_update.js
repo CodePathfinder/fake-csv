@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     
     document.querySelectorAll('.type-class').forEach((element) => {
-        update_schema_type_form(element);
+        updateSchemaTypeForm(element);
     });
 });
 
-// update_schema_type_forms
-function update_schema_type_form(element) {
+// update schematype forms
+function updateSchemaTypeForm(element) {
     
     // get schematype object id
     const type_id = element.getAttribute('id').slice(8);

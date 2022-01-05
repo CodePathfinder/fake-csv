@@ -1,2 +1,2 @@
-web: gunicorn planekstz.wsgi --log-file -
-worker: celery -A planekstz worker -l INFO
+web: gunicorn fakecsv.wsgi --log-file -
+worker: celery -A fakecsv worker -l INFO

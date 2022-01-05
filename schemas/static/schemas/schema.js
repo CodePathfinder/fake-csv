@@ -4,17 +4,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // clean type field after reload on relevant page   
     document.querySelector('#id_data_type').value = "";
     // add first column on relevant page
-    addcolumn();
+    addColumn();
     // add further columns upon pless 'Add column' button 
     document.querySelector('#add-column').onclick = function() {
-        addcolumn();
+        addColumn();
     };
 });
 
 let counter = 0;
 
 // Add new blank column to column container
-function addcolumn() {
+function addColumn() {
     
     // get column form
     const newcol = document.querySelector('#blank-column-form').innerHTML;

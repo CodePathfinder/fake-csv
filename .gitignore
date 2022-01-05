@@ -16,3 +16,7 @@ local_settings.py
 media/
 
 staticfiles/
+
+migrations/
+
+README.md
