@@ -57,8 +57,8 @@ def generate_csv(schema_id, task_key, rows=30):
         logger.info('RESPONSE STATUS CODE: %s. TEXT FETCHED FROM REMOTE API', response.status_code)
         
     except requests.exceptions.RequestException as ex:
-        logger.info('FAILED. REQUEST EXCEPTION. STATUS_CODE: %s', response.status_code)
-        return response.text
+        logger.info(f'FAILED. REQUEST EXCEPTION: {ex}')
+        return
 
 
     # Parse response

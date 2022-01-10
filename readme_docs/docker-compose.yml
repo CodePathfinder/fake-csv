@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  web:
+    build: 
+      context: ./fakecsv
+    image: gamdckr/fakecsv
+    command: >
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py wait_for_db &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - media_volume:/usr/src/app/schemas/media
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
+    depends_on: 
+      - db
+  
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev
+  redis:
+    image: redis:alpine
+  celery:
+    restart: always
+    build: 
+      context: ./fakecsv
+    image: gamdckr/fakecsv
+    command: celery -A fakecsv worker -l info
+    volumes:
+      - media_volume:/usr/src/app/schemas/media
+    env_file:
+      - ./.env.dev
+    depends_on: 
+      - db
+      - redis
+      - web
+
+volumes:
+  postgres_data:
+  media_volume:

@@ -29,12 +29,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 MOCKAROO_API_KEY = os.environ.get('MOCKAROO_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get('DEBUG') == 'True')
+DEBUG = bool(os.environ.get('DEBUG') == "True")
 
-ALLOWED_HOSTS = ['fake--csv.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['fake--csv.herokuapp.com', '127.0.0.1', 'localhost']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
